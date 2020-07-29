@@ -24,16 +24,16 @@ class AuthController extends Controller {
 	public function login(Request $request) {
 		try {
 			$credentials = $request->only('email', 'password');
-			return response()->json([$credentials]);
 			if (!($token = JWTAuth::attempt($credentials))) {
 				return response()->json([
 					'status' => 'error',
-					'error' => 'invalid.credentials',
-					'msg' => 'Invalid Credentials.',
-				], Response::HTTP_BAD_REQUEST);
+					'msg' => 'Information Login Incorect!',
+				]);
 			}
 
-			return response()->json(['token' => $token], Response::HTTP_OK);
+			$data = User::where("email", $request->email)->first();
+
+			return response()->json(['token' => $token, 'data' => $data], Response::HTTP_OK);
 		} catch (\Exception $e) {
 			\Log::info($e);
 			return 'error';
